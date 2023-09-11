@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra de Bingo</title>
+    <style>
+        /* Estilos CSS similares a la Universidad de Costa Rica */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-top: 20px;
+        }
+
+        .bingo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            background-color: #fff;
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .bingo-letter {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            background-color: #eee;
+            padding: 5px 0;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .bingo-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 60px;
+            background-color: #ffea00;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .bingo-cell.clicked {
+            background-color: #4caf50;
+        }
+
+        #number-list, #pending-list {
+            text-align: left;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        .bingo-number {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="bingo-container">
+        <h1>Pizarra de Bingo</h1>
+        <div class="bingo-board">
+            <div class="bingo-letter">B</div>
+            <div class="bingo-letter">I</div>
+            <div class="bingo-letter">N</div>
+            <div class="bingo-letter">G</div>
+            <div class="bingo-letter">O</div>
+            <!-- Genera las celdas en el orden B, I, N, G, O y sus respectivos rangos -->
+            <script>
+                const ranges = {
+                    B: [1, 15],
+                    I: [16, 30],
+                    N: [31, 45],
+                    G: [46, 60],
+                    O: [61, 75]
+                };
+
+                const bingoOrder = ['B', 'I', 'N', 'G', 'O'];
+                const bingoNumbers = [];
+
+                bingoOrder.forEach(letter => {
+                    const [start, end] = ranges[letter];
+                    for (let i = start; i <= end; i++) {
+                        bingoNumbers.push({ letter, number: i });
+                    }
+                });
+
+                // Ordena los números en orden ascendente
+                bingoNumbers.sort((a, b) => a.number - b.number);
+
+                bingoNumbers.forEach(item => {
+                    const cell = document.createElement('div');
+                    cell.className = 'bingo-cell bingo-letter-' + item.letter;
+                    cell.textContent = item.number;
+                    cell.addEventListener('click', () => toggleCell(cell, item.number));
+                    document.querySelector('.bingo-board').appendChild(cell);
+                });
+            </script>
+        </div>
+
+        <button id="reset-button">Reset</button>
+        <button id="random-number-button">Número Aleatorio</button>
+
+        <div id="number-list">
+            <h2>Números Presionados:</h2>
+            <div class="bingo-number" id="clicked-numbers"></div>
+        </div>
+
+        <div id="pending-list">
+            <h2>Números Pendientes:</h2>
+            <div class="bingo-number" id="pending-numbers"></div>
+        </div>
+
+        <!-- Cuadrícula de cartón de bingo para números presionados -->
+        <div class="bingo-board" id="bingo-card-clicked"></div>
+
+        <!-- Cuadrícula de cartón de bingo para números pendientes -->
+        <div class="bingo-board" id="bingo-card-pending"></div>
+    </div>
+
+    <script>
+        const clickedNumbers = [];
+        const pendingNumbers = Array.from({ length: 75 }, (_, i) => i + 1);
+
+        // Función para cambiar el color de la celda cuando se hace clic y actualizar las listas
+        function toggleCell(cell, number) {
+            cell.classList.toggle('clicked');
+
+            if (cell.classList.contains('clicked')) {
+                clickedNumbers.push(number);
+                const index = pendingNumbers.indexOf(number);
+                if (index !== -1) {
+                    pendingNumbers.splice(index, 1);
+                }
+            } else {
+                const index = clickedNumbers.indexOf(number);
+                if (index !== -1) {
+                    clickedNumbers.splice(index, 1);
+                }
+                if (!pendingNumbers.includes(number)) {
+                    pendingNumbers.push(number);
+                }
+            }
+
+            updateNumberLists();
+            updateBingoCards();
+        }
+
+        // Función para actualizar las listas de números presionados y pendientes
+        function updateNumberLists() {
+            const clickedNumbersDiv = document.querySelector('#clicked-numbers');
+            clickedNumbersDiv.innerHTML = '';
+            clickedNumbers.forEach(number => {
+                const numberDiv = document.createElement('div');
+                numberDiv.textContent = number;
+                clickedNumbersDiv.appendChild(numberDiv);
+                clickedNumbersDiv.appendChild(document.createElement('br'));
+            });
+
+            const pendingNumbersDiv = document.querySelector('#pending-numbers');
+            pendingNumbersDiv.innerHTML = '';
+            pendingNumbers.forEach(number => {
+                const numberDiv = document.createElement('div');
+                numberDiv.textContent = number;
+                pendingNumbersDiv.appendChild(numberDiv);
+                pendingNumbersDiv.appendChild(document.createElement('br'));
+            });
+        }
+
+        // Función para actualizar las cuadrículas de cartón de bingo
+        function updateBingoCards() {
+            const bingoCardClicked = document.querySelector('#bingo-card-clicked');
+            const bingoCardPending = document.querySelector('#bingo-card-pending');
+
+            bingoCardClicked.innerHTML = '';
+            bingoCardPending.innerHTML = '';
+
+            for (let i = 1; i <= 75; i++) {
+                const cellClicked = document.createElement('div');
+                cellClicked.className = 'bingo-cell bingo-letter-' + getBingoLetter(i);
+                cellClicked.textContent = clickedNumbers.includes(i) ? i : '';
+                bingoCardClicked.appendChild(cellClicked);
+
+                const cellPending = document.createElement('div');
+                cellPending.className = 'bingo-cell bingo-letter-' + getBingoLetter(i);
+                cellPending.textContent = pendingNumbers.includes(i) ? i : '';
+                bingoCardPending.appendChild(cellPending);
+            }
+        }
+
+        // Función para obtener la letra de Bingo correspondiente a un número
+        function getBingoLetter(number) {
+            if (number >= 1 && number <= 15) {
+                return 'B';
+            } else if (number >= 16 && number <= 30) {
+                return 'I';
+            } else if (number >= 31 && number <= 45) {
+                return 'N';
+            } else if (number >= 46 && number <= 60) {
+                return 'G';
+            } else {
+                return 'O';
+            }
+        }
+
+        // Evento para reiniciar todas las celdas y las listas al hacer clic en el botón de reset
+        document.getElementById('reset-button').addEventListener('click', () => {
+            const cells = document.querySelectorAll('.bingo-cell');
+            cells.forEach(cell => {
+                cell.classList.remove('clicked');
+            });
+
+            clickedNumbers.length = 0;
+            pendingNumbers.length = 0;
+            for (let i = 1; i <= 75; i++) {
+                pendingNumbers.push(i);
+            }
+
+            updateNumberLists();
+            updateBingoCards();
+        });
+
+        // Evento para seleccionar un número aleatorio de los pendientes al hacer clic en el botón "Número Aleatorio"
+        document.getElementById('random-number-button').addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * pendingNumbers.length);
+            const randomNumber = pendingNumbers.splice(randomIndex, 1)[0];
+
+            const cells = document.querySelectorAll('.bingo-cell');
+            const cellToToggle = [...cells].find(cell => parseInt(cell.textContent) === randomNumber);
+
+            if (cellToToggle) {
+                toggleCell(cellToToggle, randomNumber);
+            }
+        });
+    </script>
+</body>
+</html>
