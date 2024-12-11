@@ -12,29 +12,51 @@
             text-align: center;
             margin: 0;
             padding: 0;
+            
         }
 
         h1 {
             font-size: 36px;
             margin-top: 20px;
         }
+        
+        
+        #mydiv {
+        position: absolute;
+        z-index: 9;
+        background-color: #f1f1f1;
+        border: 1px solid #d3d3d3;
+        text-align: center;
+        }
+        
+        #mydivheader {
+        padding: 10px;
+        cursor: move;
+        z-index: 10;
+        background-color: #2196F3;
+        color: #fff;
+        }
+
+
 
         .bingo-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: 20px auto;
-            max-width: 800px;
+            
         }
+        
 
         .bingo-board {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(15, 1fr);
             gap: 10px;
             background-color: #fff;
             border: 2px solid #333;
             border-radius: 5px;
             padding: 10px;
+            
         }
 
         .bingo-letter {
@@ -52,11 +74,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
+            width: 60px;
             height: 60px;
             background-color: #ffea00;
             text-align: center;
-            font-size: 24px;
+            font-size: 35px;
             font-weight: bold;
             cursor: pointer;
             border-radius: 5px;
@@ -72,6 +94,7 @@
             max-width: 800px;
             margin: 20px auto;
             padding: 0 10px;
+            
         }
 
         .bingo-number {
@@ -95,15 +118,73 @@
         }
     </style>
 </head>
+
 <body>
     <div class="bingo-container">
         <h1>Pizarra de Bingo</h1>
+        
+        <!-- Draggable DIV -->
+        <div id="mydiv">
+          
+<script>
+  // Make the DIV element draggable:
+dragElement(document.getElementById("mydiv"));
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    // if present, the header is where you move the DIV from:
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    // otherwise, move the DIV from anywhere inside the DIV:
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    // stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+ 
+  
+</script>
+          <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+          <div id="mydivheader">Click para mover</div>
+          
+          <button id="reset-button">Reset</button>
+          <button id="random-number-button">Número Aleatorio</button>
+          
+        </div>
+       
+        
         <div class="bingo-board">
-            <div class="bingo-letter">B</div>
-            <div class="bingo-letter">I</div>
-            <div class="bingo-letter">N</div>
-            <div class="bingo-letter">G</div>
-            <div class="bingo-letter">O</div>
+   
             <!-- Genera las celdas en el orden B, I, N, G, O y sus respectivos rangos -->
             <script>
                 const ranges = {
@@ -135,26 +216,32 @@
                     document.querySelector('.bingo-board').appendChild(cell);
                 });
             </script>
+       
+
         </div>
-
-        <button id="reset-button">Reset</button>
-        <button id="random-number-button">Número Aleatorio</button>
-
+         
+          <input type="text" id="input-number" autocomplete="off"  placeholder="Ingrese un número (1-75)">
+          <button id="add-number-button">Agregar Número</button>
+          
         <div id="number-list">
-            <h2>Números Presionados:</h2>
+            <h2>Números Jugados:</h2>
             <div class="bingo-number" id="clicked-numbers"></div>
         </div>
+        
+         <!-- Cuadrícula de cartón de bingo para números presionados -->
+        <div class="bingo-board" id="bingo-card-clicked"></div>
+          <br><br><br><br><br>
 
         <div id="pending-list">
             <h2>Números Pendientes:</h2>
             <div class="bingo-number" id="pending-numbers"></div>
         </div>
-
-        <!-- Cuadrícula de cartón de bingo para números presionados -->
-        <div class="bingo-board" id="bingo-card-clicked"></div>
-
+          <br><br><br>
+       
         <!-- Cuadrícula de cartón de bingo para números pendientes -->
         <div class="bingo-board" id="bingo-card-pending"></div>
+        
+
     </div>
 
     <script>
@@ -190,19 +277,19 @@
             const clickedNumbersDiv = document.querySelector('#clicked-numbers');
             clickedNumbersDiv.innerHTML = '';
             clickedNumbers.forEach(number => {
-                const numberDiv = document.createElement('div');
-                numberDiv.textContent = number;
+                const numberDiv = document.createElement('list');
+                numberDiv.textContent = number + " - ";
                 clickedNumbersDiv.appendChild(numberDiv);
-                clickedNumbersDiv.appendChild(document.createElement('br'));
+               // clickedNumbersDiv.appendChild(document.createElement('br'));
             });
 
             const pendingNumbersDiv = document.querySelector('#pending-numbers');
             pendingNumbersDiv.innerHTML = '';
             pendingNumbers.forEach(number => {
-                const numberDiv = document.createElement('div');
-                numberDiv.textContent = number;
+                const numberDiv = document.createElement('list');
+                numberDiv.textContent = number + " - ";
                 pendingNumbersDiv.appendChild(numberDiv);
-                pendingNumbersDiv.appendChild(document.createElement('br'));
+                //pendingNumbersDiv.appendChild(document.createElement('br'));
             });
         }
 
@@ -271,6 +358,40 @@
                 toggleCell(cellToToggle, randomNumber);
             }
         });
+        
+          // Obtén una referencia al elemento input y al botón
+    const inputNumber = document.getElementById('input-number');
+    const addButton1 = document.getElementById('add-number-button');
+
+    // Asocia un evento al botón para agregar el número ingresado
+    addButton1.addEventListener('click', () => {
+        // Obtiene el número ingresado por el usuario
+        const number = parseInt(inputNumber.value);
+
+        // Verifica si el número es válido (no repetido y no mayor que 75)
+        if (!isNaN(number) && number >= 1 && number <= 75 && !clickedNumbers.includes(number)) {
+            // Agrega el número a la lista de números presionados
+            //clickedNumbers.push(number);
+            const randomIndex = Math.floor(Math.random() * pendingNumbers.length);
+            const randomNumber = pendingNumbers.splice(randomIndex, 1)[0];
+
+            const cells = document.querySelectorAll('.bingo-cell');
+            const cellToToggle = [...cells].find(cell => parseInt(cell.textContent) === number);
+
+            if (cellToToggle) {
+                toggleCell(cellToToggle, number);
+            }
+            // Actualiza las listas y cartones de bingo
+            updateNumberLists();
+            updateBingoCards();
+
+            // Limpia el input para futuras entradas
+            inputNumber.value = '';
+        }
+    });
     </script>
+    
+
+    
 </body>
 </html>
