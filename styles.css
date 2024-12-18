@@ -1,0 +1,112 @@
+
+        /* Estilos CSS similares a la Universidad de Costa Rica */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-top: 20px;
+        }
+        
+        
+        #mydiv {
+        position: absolute;
+        z-index: 9;
+        background-color: #f1f1f1;
+        border: 1px solid #d3d3d3;
+        text-align: center;
+        }
+        
+        #mydivheader {
+        padding: 10px;
+        cursor: move;
+        z-index: 10;
+        background-color: #2196F3;
+        color: #fff;
+        }
+
+
+
+        .bingo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            
+        }
+        
+
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 10px;
+            background-color: #fff;
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            
+        }
+
+        .bingo-letter {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            background-color: #eee;
+            padding: 5px 0;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .bingo-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: #ffea00;
+            text-align: center;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .bingo-cell.clicked {
+            background-color: #4caf50;
+        }
+
+        #number-list, #pending-list {
+            text-align: left;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 10px;
+            
+        }
+
+        .bingo-number {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #555;
+        }

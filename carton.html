@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .bingo-card {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      width: 250px;
+      margin: 20px auto;
+    }
+    .bingo-cell {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #000;
+      background-color: #fff;
+      cursor: pointer;
+    }
+    .bingo-cell.marked {
+      background-color: #4caf50;
+      color: white;
+    }
+    .bingo-cell.free {
+      background-color: #f0f0f0;
+      color: #000;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bingo Game</h1>
+  <div id="bingo-card" class="bingo-card"></div>
+  <button onclick="checkWin()">Verifica la suerte</button>
+  <button onclick="resetGame()">Nuevo Cartón</button>
+  <p id="result"></p>
+
+  <script>
+  // Generador pseudoaleatorio con semilla
+function seededRandom(seed) {
+  const modulus = 2 ** 31 - 1;
+  const multiplier = 16807;
+  seed = (seed * multiplier) % modulus;
+  return seed / modulus;
+}
+
+// Generar un cartón de bingo único y repetible
+function generarCarton(seed) {
+  const carton = [];
+  const columnas = [
+    { rango: [1, 15], numeros: [] },
+    { rango: [16, 30], numeros: [] },
+    { rango: [31, 45], numeros: [] },
+    { rango: [46, 60], numeros: [] },
+    { rango: [61, 75], numeros: [] },
+  ];
+
+  columnas.forEach((columna, index) => {
+    const numeros = new Set();
+    while (numeros.size < 5) {
+      seed = Math.abs(seed) || 1; // Evita semilla 0
+      const random = seededRandom(seed + index * 1000); // Variación por columna
+      const numero = Math.floor(random * (columna.rango[1] - columna.rango[0] + 1)) + columna.rango[0];
+      numeros.add(numero);
+      seed = Math.floor(random * 1e6); // Actualiza la semilla
+    }
+    columna.numeros = [...numeros].sort((a, b) => a - b);
+  });
+
+  // Formar filas del cartón
+  for (let i = 0; i < 5; i++) {
+    carton.push(
+      columnas.map((columna, index) => (index === 2 && i === 2 ? "FREE" : columna.numeros[i]))
+    );
+  }
+
+  return carton;
+}
+
+// Renderizar el cartón en HTML
+function renderCarton(carton, marked = []) {
+  const bingoCardDiv = document.getElementById("bingo-card");
+  bingoCardDiv.innerHTML = ""; // Limpiar contenido previo
+
+  carton.forEach((fila, rowIndex) => {
+    fila.forEach((numero, colIndex) => {
+      const cell = document.createElement("div");
+      cell.classList.add("bingo-cell");
+      if (numero === "FREE") {
+        cell.textContent = "FREE";
+        cell.classList.add("free", "marked");
+      } else {
+        cell.textContent = numero;
+        cell.onclick = () => {
+          cell.classList.toggle("marked");
+          saveState(carton);
+        };
+      }
+      if (marked[rowIndex * 5 + colIndex]) {
+        cell.classList.add("marked");
+      }
+      bingoCardDiv.appendChild(cell);
+    });
+  });
+}
+
+// Extraer semilla desde los parámetros GET
+function getSeedFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const seed = parseInt(params.get("seed"), 10);
+  return isNaN(seed) ? Date.now() : seed; // Si no hay semilla, usa la hora actual
+}
+
+// Guardar estado del cartón (marcados)
+function saveState(carton) {
+  const marked = Array.from(document.querySelectorAll(".bingo-cell")).map(cell =>
+    cell.classList.contains("marked")
+  );
+  localStorage.setItem("bingo-state", JSON.stringify({ carton, marked }));
+}
+
+// Restaurar estado del cartón
+function restoreState() {
+  const savedState = JSON.parse(localStorage.getItem("bingo-state"));
+  if (savedState) {
+    renderCarton(savedState.carton, savedState.marked);
+  }
+}
+
+// Inicializar
+document.addEventListener("DOMContentLoaded", () => {
+  const seed = getSeedFromUrl();
+  const carton = generarCarton(seed);
+
+  // Si hay estado guardado, restaurar
+  if (localStorage.getItem("bingo-state")) {
+    restoreState();
+  } else {
+    renderCarton(carton);
+    saveState(carton);
+  }
+});
+
+
+    // Verificar si hay una victoria
+    function checkWin() {
+      const cells = Array.from(document.querySelectorAll(".bingo-cell"));
+      const marked = cells.map((cell) => cell.classList.contains("marked"));
+
+      // Filas
+      for (let i = 0; i < 5; i++) {
+        if (marked.slice(i * 5, i * 5 + 5).every(Boolean)) {
+          return displayResult("Row Completed!");
+        }
+      }
+
+      // Columnas
+      for (let i = 0; i < 5; i++) {
+        if ([0, 1, 2, 3, 4].map((j) => marked[i + j * 5]).every(Boolean)) {
+          return displayResult("Column Completed!");
+        }
+      }
+
+      // Diagonales
+      if ([0, 6, 12, 18, 24].map((i) => marked[i]).every(Boolean)) {
+        return displayResult("Diagonal Completed!");
+      }
+      if ([4, 8, 12, 16, 20].map((i) => marked[i]).every(Boolean)) {
+        return displayResult("Diagonal Completed!");
+      }
+
+      // Cuatro esquinas
+      if ([0, 4, 20, 24].map((i) => marked[i]).every(Boolean)) {
+        return displayResult("Four Corners Completed!");
+      }
+
+      // Cartón lleno
+      if (marked.every(Boolean)) {
+        return displayResult("Full Card Completed!");
+      }
+
+      // Letra L
+      const leftColumn = [0, 5, 10, 15, 20].map((i) => marked[i]).every(Boolean);
+      const bottomRow = [20, 21, 22, 23, 24].every((i) => marked[i]);
+      if (leftColumn && bottomRow) {
+        return displayResult("L Shape Completed!");
+      }
+
+      // Letra X
+      const cross = [0, 4, 12, 20, 24].map((i) => marked[i]).every(Boolean);
+      if (cross) {
+        return displayResult("X Shape Completed!");
+      }
+
+      displayResult("No Win Yet!");
+    }
+
+    // Reiniciar el juego
+    function resetGame() {
+      localStorage.removeItem("bingoState");
+      localStorage.removeItem("bingo-state"); 
+      const newCarton = generarCarton();
+      renderCarton(newCarton);
+      displayResult("");
+    }
+
+    // Mostrar el resultado
+    function displayResult(message) {
+      document.getElementById("result").textContent = message;
+    }
+  </script>
+</body>
+</html>
