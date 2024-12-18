@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar Cartón de Bingo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        ul {
+            margin-top: 20px;
+            padding: 0;
+            list-style-type: none;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: blue;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generador de Cartones de Bingo</h1>
+    <button id="generate-button">Generar Nuevo Cartón</button>
+    <button id="reset-button">Reiniciar Todo</button>
+    <ul id="bingo-list"></ul>
+
+    <script>
+        // Clave para almacenar los datos en localStorage
+        const STORAGE_KEY = "generatedSeeds";
+
+        // Elementos del DOM
+        const bingoList = document.getElementById('bingo-list');
+        const generateButton = document.getElementById('generate-button');
+        const resetButton = document.getElementById('reset-button');
+
+        // Obtener semillas desde localStorage o inicializar como un array vacío
+        let generatedSeeds = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+        // Función para guardar las semillas en localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(generatedSeeds));
+        }
+
+        // Función para generar un número aleatorio no repetido
+        function generateUniqueSeed() {
+            let seed;
+            do {
+                seed = Math.floor(Math.random() * 1000) + 1;
+            } while (generatedSeeds.includes(seed)); // Evitar duplicados
+
+            generatedSeeds.push(seed); // Guardar el nuevo seed
+            saveToLocalStorage(); // Guardar en localStorage
+            return seed;
+        }
+
+        // Función para agregar el enlace al DOM
+        function addBingoLink(seed) {
+            // Crear un nuevo elemento de lista
+            const listItem = document.createElement('li');
+            // Crear el enlace dinámico
+            const link = document.createElement('a');
+            link.href = `carton.html?seed=${seed}`;
+            link.target = '_blank';
+            link.textContent = `Cartón de Bingo (Seed: ${seed})`;
+            // Agregar el enlace al elemento de lista
+            listItem.appendChild(link);
+            // Agregar el elemento de lista al ul
+            bingoList.appendChild(listItem);
+        }
+
+        // Función para inicializar la lista desde las semillas almacenadas
+        function initializeList() {
+            bingoList.innerHTML = ""; // Limpiar la lista actual
+            generatedSeeds.forEach(seed => addBingoLink(seed)); // Agregar todos los enlaces guardados
+        }
+
+        // Evento para generar un nuevo cartón
+        generateButton.addEventListener('click', () => {
+            const seed = generateUniqueSeed(); // Generar un seed único
+            addBingoLink(seed); // Agregar el enlace dinámico
+        });
+
+        // Evento para reiniciar todo
+        resetButton.addEventListener('click', () => {
+            generatedSeeds = []; // Vaciar el array de semillas
+            localStorage.removeItem(STORAGE_KEY); // Eliminar datos de localStorage
+            bingoList.innerHTML = ""; // Limpiar la lista del DOM
+        });
+
+        // Inicializar la lista al cargar la página
+        initializeList();
+    </script>
+</body>
+</html>

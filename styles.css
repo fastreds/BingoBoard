@@ -44,7 +44,7 @@
 
         .bingo-board {
             display: grid;
-            grid-template-columns: repeat(15, 1fr);
+            grid-template-columns: repeat(16, 1fr);
             gap: 10px;
             background-color: #fff;
             border: 2px solid #333;

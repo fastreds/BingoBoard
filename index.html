@@ -18,16 +18,7 @@
         <button id="random-number-button">Número Aleatorio</button>
         <input type="text" id="input-number" placeholder="Número (1-75)">
         <button id="add-number-button">Agregar Número</button>
-        <a href="#" id="bingo-link" target="_blank">Generar Cartón de Bingo</a>
-
-        <script>
-            // Generar un número aleatorio entre 1 y 1000 como seed
-            const seed = Math.floor(Math.random() * 1000) + 1;
-    
-            // Asignar el enlace dinámicamente con el seed
-            const bingoLink = document.getElementById('bingo-link');
-            bingoLink.href = `carton.html?seed=${seed}`;
-        </script>
+        <a href="generador_cartones.html" target="_blank"> Generar Cartones de Bingo</a>
            </div>
         
         <div class="bingo-board" id="bingo-board"></div>
@@ -44,18 +35,37 @@ dragElement(document.getElementById("mydiv"));
         const clickedNumbers = JSON.parse(localStorage.getItem('clickedNumbers')) || [];
         const pendingNumbers = JSON.parse(localStorage.getItem('pendingNumbers')) || Array.from({ length: 75 }, (_, i) => i + 1);
 
-        // Inicializa el tablero de bingo
-        function initBingoBoard() {
-            const board = document.getElementById('bingo-board');
-            board.innerHTML = '';
-            for (let i = 1; i <= 75; i++) {
-                const cell = document.createElement('div');
-                cell.className = `bingo-cell ${clickedNumbers.includes(i) ? 'clicked' : ''}`;
-                cell.textContent = i;
-                cell.addEventListener('click', () => toggleNumber(i));
-                board.appendChild(cell);
+
+// Inicializa el tablero de bingo
+function initBingoBoard() {
+    const board = document.getElementById('bingo-board');
+    board.innerHTML = '';
+
+    // Define las letras del bingo
+    const bingoLetters = ['B', 'I', 'N', 'G', 'O'];
+    const columnsPerRow = 16; // Número de columnas por fila (incluyendo la letra)
+
+    for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < columnsPerRow; col++) {
+            const cell = document.createElement('div');
+
+            if (col === 0) {
+                // Crear la celda para la letra al inicio de cada fila
+                cell.className = 'bingo-letter';
+                cell.textContent = bingoLetters[row];
+            } else {
+                // Crear las celdas numeradas
+                const number = row * (columnsPerRow - 1) + col;
+                cell.className = `bingo-cell ${clickedNumbers.includes(number) ? 'clicked' : ''}`;
+                cell.textContent = number;
+                cell.addEventListener('click', () => toggleNumber(number));
             }
+
+            board.appendChild(cell);
         }
+    }
+}
+
 
         // Alterna el estado de un número
         function toggleNumber(number) {

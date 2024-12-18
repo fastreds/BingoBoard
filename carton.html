@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bingo Game</title>
+  <title>Bingo </title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -38,7 +38,7 @@
   </style>
 </head>
 <body>
-  <h1>Bingo Game</h1>
+  <h1>Bingo </h1>
   <div id="bingo-card" class="bingo-card"></div>
   <button onclick="checkWin()">Verifica la suerte</button>
   <button onclick="resetGame()">Nuevo Cartón</button>
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return displayResult("X Shape Completed!");
       }
 
-      displayResult("No Win Yet!");
+      displayResult("Aun nada!");
     }
 
     // Reiniciar el juego
@@ -209,8 +209,10 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("bingoState");
       localStorage.removeItem("bingo-state"); 
       const newCarton = generarCarton();
-      renderCarton(newCarton);
+      //renderCarton(newCarton);
       displayResult("");
+      location.reload();
+    
     }
 
     // Mostrar el resultado
