@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    match /rooms/{roomId} {
+      // Permitir a cualquiera leer el estado de la sala
+      allow read: if true;
+      
+      // Permitir crear validando tipos y tamaños máximos
+      allow create: if true 
+                    && request.resource.data.keys().hasAll(['roomId', 'createdAt', 'drawnNumbers', 'lastDrawn', 'winningPattern', 'claims'])
+                    && request.resource.data.roomId is string
+                    && request.resource.data.roomId.size() <= 20
+                    && request.resource.data.drawnNumbers is list
+                    && request.resource.data.drawnNumbers.size() <= 75
+                    && request.resource.data.claims is list
+                    && request.resource.data.claims.size() <= 100;
+      
+      // Permitir actualizaciones (cantar números, hacer reclamos) validando
+      allow update: if true
+                    && request.resource.data.roomId == resource.data.roomId
+                    && request.resource.data.drawnNumbers is list
+                    && request.resource.data.drawnNumbers.size() <= 75
+                    && request.resource.data.claims is list
+                    && request.resource.data.claims.size() <= 100;
+                    
+      // Evitar que usuarios maliciosos borren las salas activas
+      allow delete: if false;
+    }
+
+    match /system_logs/{logId} {
+      // Los usuarios no pueden leer, modificar ni borrar logs
+      allow read, update, delete: if false;
+      
+      // Solo pueden crear logs, validando que el tamaño sea razonable
+      allow create: if true
+                    && request.resource.data.keys().hasAny(['type', 'timestamp'])
+                    && (request.resource.data.type == 'event' || request.resource.data.type == 'error')
+                    && request.resource.data.userAgent is string
+                    && request.resource.data.userAgent.size() < 500;
+    }
+  }
+}
