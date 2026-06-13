@@ -151,26 +151,53 @@ export default function WelcomeScreen({ onSelectRole }) {
               SELECCIONA TU ROL PARA ENTRAR
             </p>
 
-            <div className="flex-col" style={{ gap: "10px" }}>
-              {/* Host Roles */}
-              <div className="grid-cols-2">
-                <button 
-                  className="btn btn-secondary" 
-                  onClick={() => handleJoin("presenter")}
-                  style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
-                >
-                  <Tv size={24} style={{ color: "var(--accent-red)" }} />
-                  <span>Pantalla TV</span>
-                </button>
+            <div className="flex-col" style={{ gap: "15px" }}>
+              {/* Host Roles - Bingo */}
+              <div className="flex-col" style={{ gap: "5px" }}>
+                <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--text-secondary)", letterSpacing: "0.05em" }}>JUEGO DE BINGO</span>
+                <div className="grid-cols-2">
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={() => handleJoin("presenter")}
+                    style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
+                  >
+                    <Tv size={24} style={{ color: "var(--accent-red)" }} />
+                    <span>Pantalla TV</span>
+                  </button>
 
-                <button 
-                  className="btn btn-secondary" 
-                  onClick={() => handleJoin("controller")}
-                  style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
-                >
-                  <Radio size={24} style={{ color: "var(--accent-blue)" }} />
-                  <span>Control Remoto</span>
-                </button>
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={() => handleJoin("controller")}
+                    style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
+                  >
+                    <Radio size={24} style={{ color: "var(--accent-blue)" }} />
+                    <span>Control Remoto</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Host Roles - Temporizador */}
+              <div className="flex-col" style={{ gap: "5px" }}>
+                <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--text-secondary)", letterSpacing: "0.05em" }}>TEMPORIZADOR EXPOSITOR</span>
+                <div className="grid-cols-2">
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={() => handleJoin("timer_presenter")}
+                    style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
+                  >
+                    <Tv size={24} style={{ color: "var(--success)" }} />
+                    <span>Pantalla Expositor</span>
+                  </button>
+
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={() => handleJoin("timer_controller")}
+                    style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
+                  >
+                    <Radio size={24} style={{ color: "var(--accent-blue)" }} />
+                    <span>Control Expositor</span>
+                  </button>
+                </div>
               </div>
 
               {/* Player Role */}

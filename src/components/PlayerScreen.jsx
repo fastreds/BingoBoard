@@ -5,7 +5,7 @@ import { logEvent } from "../utils/logger";
 import { Award, RefreshCw, Trophy, AlertCircle, ArrowLeft, Plus, X } from "lucide-react";
 
 export default function PlayerScreen({ roomId, playerName, onLeave }) {
-  const [roomData, setRoomData] = useState(null);
+  const [roomData, setRoomData] = useState(undefined);
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   
   // Arreglo de cartones [{ id, seed, marked: [25 bools] }]
@@ -41,10 +41,27 @@ export default function PlayerScreen({ roomId, playerName, onLeave }) {
     return () => unsubscribe();
   }, [roomId]);
 
-  if (!roomData) {
+  if (roomData === undefined) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
         <div className="glass-panel">Cargando sala {roomId}...</div>
+      </div>
+    );
+  }
+
+  if (roomData === null) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
+        <div className="glass-panel" style={{ textAlign: "center", maxWidth: "400px" }}>
+          <AlertCircle size={48} style={{ color: "var(--danger)", marginBottom: "16px", display: "inline-block" }} />
+          <h3 style={{ marginBottom: "8px" }}>La sala no existe</h3>
+          <p style={{ color: "var(--text-secondary)", marginBottom: "20px" }}>
+            La sala <strong>{roomId}</strong> no existe o ha sido eliminada.
+          </p>
+          <button className="btn btn-primary" onClick={onLeave} style={{ width: "100%" }}>
+            Volver al Inicio
+          </button>
+        </div>
       </div>
     );
   }

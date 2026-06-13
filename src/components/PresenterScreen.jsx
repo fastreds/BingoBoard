@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { subscribeToRoom } from "../firebase";
-import { Volume2, VolumeX, Maximize2, Minimize2, ArrowLeft, Award } from "lucide-react";
+import { Volume2, VolumeX, Maximize2, Minimize2, ArrowLeft, Award, AlertCircle } from "lucide-react";
 import { getRandomPhrase } from "../utils/bingoPhrases";
 
 // Obtener una voz en español latino disponible en el navegador
@@ -24,7 +24,7 @@ const getLatinVoice = () => {
 };
 
 export default function PresenterScreen({ roomId, onLeave }) {
-  const [roomData, setRoomData] = useState(null);
+  const [roomData, setRoomData] = useState(undefined);
   const [isMuted, setIsMuted] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [callingStyle, setCallingStyle] = useState("jocoso");
@@ -36,6 +36,31 @@ export default function PresenterScreen({ roomId, onLeave }) {
     });
     return () => unsubscribe();
   }, [roomId]);
+
+  if (roomData === undefined) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
+        <div className="glass-panel">Cargando sala {roomId}...</div>
+      </div>
+    );
+  }
+
+  if (roomData === null) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
+        <div className="glass-panel" style={{ textAlign: "center", maxWidth: "400px" }}>
+          <AlertCircle size={48} style={{ color: "var(--danger)", marginBottom: "16px", display: "inline-block" }} />
+          <h3 style={{ marginBottom: "8px" }}>La sala no existe</h3>
+          <p style={{ color: "var(--text-secondary)", marginBottom: "20px" }}>
+            La sala <strong>{roomId}</strong> no existe o ha sido eliminada.
+          </p>
+          <button className="btn btn-primary" onClick={onLeave} style={{ width: "100%" }}>
+            Volver al Inicio
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const lastDrawn = roomData?.lastDrawn || null;
   const drawnNumbers = roomData?.drawnNumbers || [];

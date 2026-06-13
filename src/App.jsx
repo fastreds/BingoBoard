@@ -3,6 +3,8 @@ import WelcomeScreen from "./components/WelcomeScreen";
 import PresenterScreen from "./components/PresenterScreen";
 import ControllerScreen from "./components/ControllerScreen";
 import PlayerScreen from "./components/PlayerScreen";
+import TimerPresenterScreen from "./components/TimerPresenterScreen";
+import TimerControllerScreen from "./components/TimerControllerScreen";
 import { logError } from "./utils/logger";
 
 // Escuchadores globales de errores no capturados
@@ -50,6 +52,10 @@ function App() {
       return <PresenterScreen roomId={session.roomId} onLeave={handleLeave} />;
     case "controller":
       return <ControllerScreen roomId={session.roomId} onLeave={handleLeave} />;
+    case "timer_presenter":
+      return <TimerPresenterScreen roomId={session.roomId} onLeave={handleLeave} />;
+    case "timer_controller":
+      return <TimerControllerScreen roomId={session.roomId} onLeave={handleLeave} />;
     case "player":
       return (
         <PlayerScreen 

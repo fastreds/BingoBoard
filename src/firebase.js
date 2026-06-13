@@ -48,7 +48,11 @@ export async function createRoom(roomId) {
       drawnNumbers: [],
       lastDrawn: null,
       winningPattern: "Full Card", // Patrón por defecto
-      claims: []
+      claims: [],
+      timerDuration: 300,
+      timerRemaining: 300,
+      timerEndTime: null,
+      timerStatus: "idle"
     });
   }
 }
@@ -137,4 +141,10 @@ export async function updateClaimStatus(roomId, claimsList, updatedClaims) {
   await updateDoc(roomRef, {
     claims: updatedClaims
   });
+}
+
+// Actualizar el estado del temporizador del expositor
+export async function updateTimerState(roomId, timerData) {
+  const roomRef = doc(db, "rooms", roomId);
+  await updateDoc(roomRef, timerData);
 }
