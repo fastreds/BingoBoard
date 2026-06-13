@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { subscribeToRoom } from "../firebase";
+import { subscribeToRoom } from "../../../shared/firebase";
 import { Volume2, VolumeX, Maximize2, Minimize2, ArrowLeft, Award, AlertCircle } from "lucide-react";
 import { getRandomPhrase } from "../utils/bingoPhrases";
 

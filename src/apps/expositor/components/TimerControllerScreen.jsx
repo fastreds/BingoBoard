@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { subscribeToRoom, updateTimerState } from "../firebase";
+import { subscribeToRoom, updateTimerState } from "../../../shared/firebase";
 import { ArrowLeft, Play, Pause, RotateCcw, Plus, Minus, Clock, Share2, AlertCircle } from "lucide-react";
 
 export default function TimerControllerScreen({ roomId, onLeave }) {

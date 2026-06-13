@@ -39,5 +39,9 @@ service cloud.firestore {
                     && request.resource.data.userAgent is string
                     && request.resource.data.userAgent.size() < 500;
     }
+    match /analytics_logs/{logId} {
+      allow read, create: if true;
+      allow update, delete: if false;
+    }
   }
 }

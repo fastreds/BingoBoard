@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { subscribeToRoom, claimBingo } from "../firebase";
+import { subscribeToRoom, claimBingo } from "../../../shared/firebase";
 import { generarCarton, checkPatternMatch } from "../utils/bingoGenerator";
-import { logEvent } from "../utils/logger";
+import { logEvent } from "../../../shared/utils/logger";
 import { Award, RefreshCw, Trophy, AlertCircle, ArrowLeft, Plus, X } from "lucide-react";
 
 export default function PlayerScreen({ roomId, playerName, onLeave }) {

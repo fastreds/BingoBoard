@@ -6,7 +6,7 @@ import {
   resetRoom, 
   setWinningPattern,
   updateClaimStatus
-} from "../firebase";
+} from "../../../shared/firebase";
 import { generarCarton, checkPatternMatch } from "../utils/bingoGenerator";
 import { 
   Shuffle, 
@@ -21,7 +21,7 @@ import {
   AlertCircle,
   Share2
 } from "lucide-react";
-import { logEvent } from "../utils/logger";
+import { logEvent } from "../../../shared/utils/logger";
 
 export default function ControllerScreen({ roomId, onLeave }) {
   const [roomData, setRoomData] = useState(undefined);

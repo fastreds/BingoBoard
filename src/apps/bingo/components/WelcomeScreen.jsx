@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { createRoom } from "../firebase";
+import { createRoom } from "../../../shared/firebase";
 import { Tv, Radio, User, Plus, LogIn, Share2 } from "lucide-react";
-import { logEvent } from "../utils/logger";
+import { logEvent } from "../../../shared/utils/logger";
 
 export default function WelcomeScreen({ onSelectRole }) {
   const [roomId, setRoomId] = useState("");
@@ -176,29 +176,7 @@ export default function WelcomeScreen({ onSelectRole }) {
                 </div>
               </div>
 
-              {/* Host Roles - Temporizador */}
-              <div className="flex-col" style={{ gap: "5px" }}>
-                <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--text-secondary)", letterSpacing: "0.05em" }}>TEMPORIZADOR EXPOSITOR</span>
-                <div className="grid-cols-2">
-                  <button 
-                    className="btn btn-secondary" 
-                    onClick={() => handleJoin("timer_presenter")}
-                    style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
-                  >
-                    <Tv size={24} style={{ color: "var(--success)" }} />
-                    <span>Pantalla Expositor</span>
-                  </button>
 
-                  <button 
-                    className="btn btn-secondary" 
-                    onClick={() => handleJoin("timer_controller")}
-                    style={{ flexDirection: "column", padding: "16px 10px", fontSize: "0.9rem" }}
-                  >
-                    <Radio size={24} style={{ color: "var(--accent-blue)" }} />
-                    <span>Control Expositor</span>
-                  </button>
-                </div>
-              </div>
 
               {/* Player Role */}
               <div 
